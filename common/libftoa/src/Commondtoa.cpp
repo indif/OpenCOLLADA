@@ -276,7 +276,7 @@ namespace Common
 		}
 		else
 		{
-			p = dtoa_no_exponent(d, buffer, doublePrecision ? 16 : 7);
+			p = dtoa_no_exponent(d, buffer, doublePrecision ? 16 : 4); //董波修改：修改模型数据的输出精度
 		}
 
 		*p = 0;
