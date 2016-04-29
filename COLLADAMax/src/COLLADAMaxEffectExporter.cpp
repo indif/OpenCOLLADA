@@ -1360,8 +1360,10 @@ namespace COLLADAMax
 		
 		String relativePath = mDocumentExporter->getOptions().getImageDirectory();
 		relativePath.append("/");
-		relativePath.append( COLLADABU::Utils::toString( mCopyImageCounter++ ) );
-		relativePath.append("_");
+
+		//去掉图片复制时带的id号
+		//relativePath.append( COLLADABU::Utils::toString( mCopyImageCounter++ ) );
+		//relativePath.append("_");
 		relativePath.append( sourceUri.getPathFile() );
 
 		COLLADASW::URI targetUri ( outputFile, relativePath);
