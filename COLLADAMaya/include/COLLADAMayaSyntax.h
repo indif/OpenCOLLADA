@@ -17,14 +17,12 @@
 #define __COLLADA_MAYA_SYNTAX_H__
 
 #include "COLLADAMayaPrerequisites.h"
-
+#include "COLLADABUVersionInfo.h"
 
 namespace COLLADAMaya
 {
-    
     // COLLADA NetAllied Systems
     static const char* TRANSLATOR_VENDOR                            = "NetAllied Systems GmbH";
-    static const char* TRANSLATOR_VERSION                           = "1.3.0";
     static const char* USERNAME                                     = "USERNAME";
     static const char* USER                                         = "USER";
 
@@ -42,7 +40,8 @@ namespace COLLADAMaya
     /** Extra technique parameters. */
     static const String PARAMETER_MAYA_ID                           = "originalMayaNodeId";
     static const String PARAMETER_DOUBLE_SIDED                      = "double_sided";
-	
+	static const String PARAMETER_PROXY								= "proxy";
+
     /** Empty strings. */
     static const String EMPTY_STRING                                = "";
     static const char* EMPTY_CSTRING                                = "";
@@ -299,7 +298,7 @@ namespace COLLADAMaya
 	static const char* ATTR_EVENT_ANIMATION							= "animationEvent";
 	static const char* ATTR_CLIP_SOURCE_START						= "sourceStart";
 	static const char* ATTR_CLIP_SOURCE_END							= "sourceEnd";
-
+	static const char* ATTR_THRESHOLD								= "threshold";
 
     /** Constants for the cameras */
     static const char* CAMERA_PERSP                                 = "persp";

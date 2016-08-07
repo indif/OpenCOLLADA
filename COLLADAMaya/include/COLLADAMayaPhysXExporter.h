@@ -63,22 +63,32 @@ namespace COLLADAMaya
     public:
         PhysXExporter(COLLADASW::StreamWriter& streamWriter, DocumentExporter& documentExporter);
 
-        bool needsConvexHullOf(const SceneElement & element);
+        static bool CheckPhysXPluginVersion();
+        static MString GetRequiredPhysXPluginVersion();
+        static MString GetInstalledPhysXPluginVersion();
 
+        bool generatePhysXXML();
+        bool needsConvexHullOf(const SceneElement & element, MObject & shape);
         bool exportPhysicsLibraries();
 
         COLLADASW::StreamWriter& getStreamWriter();
         DocumentExporter& getDocumentExporter();
 
+		void exportTranslationWithoutConversion(const MVector & translation, const String & sid = "");
         void exportTranslation(const MVector & translation, const String & sid = "");
         void exportRotation(const MEulerRotation & rotation, const String & sid = "");
         void exportAttributes(const MObject & object, const std::set<MString, MStringComp> & attributes);
+        void exportExtraAttributes(const MObject & object);
         void exportMaterialPhysXXML(const MObject& material);
         void exportShapePhysXXML(const MObject& rigidBody, const MObject& shape);
         void exportRigidBodyPhysXXML(const MObject& shape);
         void exportRigidConstraintPhysXXML(const MObject& constraint);
 
+		MObject getNodeRigidBody(const MObject& node);
+        MObject getShapeRigidBody(const MObject& shape);
         void getShapeLocalPose(const MObject& rigidBody, const MObject& shape, MMatrix& localPose);
+        bool getShapeVertices(const MObject& shape, std::vector<PhysXXML::Point> & vertices, MString & meshId);
+        bool getShapeTriangles(const MObject& shape, std::vector<PhysXXML::Triangle> & triangles);
         void getRigidBodyGlobalPose(const MObject& rigidBody, MMatrix& globalPose);
         void getRigidBodyTarget(const MObject& rigidBody, MObject& target);
         bool getRigidSolver(MObject & rigidSolver);
@@ -123,6 +133,8 @@ namespace COLLADAMaya
         static const String& GetProfile();
         static const String& GetProfileXML();
 
+		static bool HasExtraAttributes(const MObject & object);
+
         enum Filter
         {
             All,
@@ -132,16 +144,16 @@ namespace COLLADAMaya
         bool sceneHas(SceneElement::Type type, Filter filter = All);
 
         PhysXXML::PxRigidStatic* findPxRigidStatic(const String& name);
-        PhysXXML::PxMaterial* findPxMaterial(int ref);
+        PhysXXML::PxMaterial* findPxMaterial(uint64_t ref);
+		PhysXXML::PxMaterial* findPxMaterial(const MObject& rigidBody);
+		PhysXXML::PxShape* findPxShape(const MObject& rigidBody, const MObject& shape);
+		PhysXXML::PxRigidStatic* findPxRigidStatic(uint64_t id);
+		PhysXXML::PxRigidStatic* findPxRigidStatic(const MObject& rigidBody);
+		PhysXXML::PxRigidDynamic* findPxRigidDynamic(uint64_t id);
+		PhysXXML::PxRigidDynamic* findPxRigidDynamic(const MObject& rigidBody);
+		PhysXXML::PxD6Joint* findPxD6Joint(const MObject& rigidConstraint);
 
     private:
-        bool generatePhysXXML();
-        PhysXXML::PxMaterial* findPxMaterial(const MObject& rigidBody);
-        PhysXXML::PxShape* findPxShape(const MObject& rigidBody, const MObject& shape);
-        PhysXXML::PxRigidStatic* findPxRigidStatic(const MObject& rigidBody);
-        PhysXXML::PxRigidDynamic* findPxRigidDynamic(const MObject& rigidBody);
-        PhysXXML::PxD6Joint* findPxD6Joint(const MObject& rigidConstraint);
-
         void exportRotate(const MVector & axis, double angle, const String & sid = "");
 
         static bool ElementHas(const SceneElement & element, SceneElement::Type type, Filter filter);

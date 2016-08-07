@@ -244,6 +244,10 @@ namespace COLLADAMaya
         const MDagPath &dagPath,
         SceneElement* parentSceneElement )
     {
+        // Add the element to the current selection list.
+        // This is needed to make sure PhysX plugin also exports them.
+        MGlobal::select(dagPath, MObject::kNullObj, MGlobal::kAddToList);
+
         // Create a new scene element
         SceneElement* sceneElement = new SceneElement ( dagPath );
 
@@ -374,23 +378,6 @@ namespace COLLADAMaya
             nodeTypeName == NX_RIGID_CONSTRAINT ||
             nodeTypeName == NX_SHAPE) {
             return false;
-        }
-
-        // If rigid body has no target then export it as a node
-        if (nodeTypeName == NX_RIGID_BODY)
-        {
-            MObject target = DagHelper::getNodeConnectedTo(object, ATTR_TARGET);
-            if (target.isNull())
-            {
-                isForced = false;
-                isVisible = true;
-                isPhysics = false;
-                return true;
-            }
-            else
-            {
-                return false;
-            }
         }
 
         // If we are not already forcing this node, its children

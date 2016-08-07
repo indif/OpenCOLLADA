@@ -222,6 +222,26 @@ namespace COLLADAMaya
             s >> content;
         }
 
+        void GetContent(xmlNode* node, uint64_t& content)
+        {
+            if (!node) {
+                return;
+            }
+
+            node = FindChild(node, Strings::text);
+            if (!node) {
+                return;
+            }
+
+            if (!node->content) {
+                return;
+            }
+
+            std::stringstream s;
+            s << node->content;
+            s >> content;
+        }
+
         void GetContent(xmlNode* node, MQuaternion& q, MVector& v)
         {
             if (!node) {
@@ -2235,7 +2255,27 @@ namespace COLLADAMaya
             return true;
         }
 
-        PxMaterial* PhysXDoc::findMaterial(int ref)
+        PxConvexMesh* PhysXDoc::findConvexMesh(uint64_t id)
+        {
+            for (size_t i = 0; i < physX30Collection.convexMeshes.size(); ++i) {
+                PxConvexMesh& convexMesh = physX30Collection.convexMeshes[i];
+                if (convexMesh.id.id == id)
+                    return &convexMesh;
+            }
+            return NULL;
+        }
+
+        PxTriangleMesh* PhysXDoc::findTriangleMesh(uint64_t id)
+        {
+            for (size_t i = 0; i < physX30Collection.triangleMeshes.size(); ++i) {
+                PxTriangleMesh& triangleMesh = physX30Collection.triangleMeshes[i];
+                if (triangleMesh.id.id == id)
+                    return &triangleMesh;
+            }
+            return NULL;
+        }
+
+        PxMaterial* PhysXDoc::findMaterial(uint64_t ref)
         {
             for (size_t i = 0; i < physX30Collection.materials.size(); ++i) {
                 PxMaterial& material = physX30Collection.materials[i];
@@ -2268,6 +2308,17 @@ namespace COLLADAMaya
             return NULL;
         }
 
+		PxRigidStatic* PhysXDoc::findRigidStatic(uint64_t id)
+		{
+			for (size_t i = 0; i < physX30Collection.rigidStatics.size(); ++i) {
+				PxRigidStatic& rigid = physX30Collection.rigidStatics[i];
+				if (rigid.id.id == id) {
+					return &rigid;
+				}
+			}
+			return NULL;
+		}
+
         PxRigidStatic* PhysXDoc::findRigidStatic(const String& bodyName)
         {
             for (size_t i = 0; i < physX30Collection.rigidStatics.size(); ++i) {
@@ -2278,6 +2329,17 @@ namespace COLLADAMaya
             }
             return NULL;
         }
+
+		PxRigidDynamic* PhysXDoc::findRigidDynamic(uint64_t id)
+		{
+			for (size_t i = 0; i < physX30Collection.rigidDynamics.size(); ++i) {
+				PxRigidDynamic& rigid = physX30Collection.rigidDynamics[i];
+				if (rigid.id.id == id) {
+					return &rigid;
+				}
+			}
+			return NULL;
+		}
 
         PxRigidDynamic* PhysXDoc::findRigidDynamic(const String& bodyName)
         {
@@ -2306,6 +2368,7 @@ namespace COLLADAMaya
         {}
 
         PhysXDocPtr::PhysXDocPtr(xmlDocPtr xml)
+            : mPhysXDoc(NULL)
         {
             if (mPhysXDoc) {
                 delete mPhysXDoc;
@@ -2332,6 +2395,11 @@ namespace COLLADAMaya
         PhysXDoc* PhysXDocPtr::operator -> () const
         {
             return mPhysXDoc;
+        }
+
+        PhysXDocPtr::operator bool() const
+        {
+            return mPhysXDoc != NULL;
         }
     }
 }
